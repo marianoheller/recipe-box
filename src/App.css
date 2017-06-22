@@ -1,0 +1,26 @@
+body {
+  margin: 0;
+  padding: 0;
+  font-family: sans-serif;
+  user-select: none;
+}
+
+
+.container {
+  text-align: center;
+}
+
+.header {
+  text-align: center;
+  margin: 5rem 0 ; 
+}
+
+td, th {
+  text-align: center;
+  user-select: none;
+}
+
+tbody > tr:hover {
+  background-color: rgb(245,245,245);
+  cursor: pointer;
+}
