@@ -80,6 +80,25 @@ export class App extends Component {
       )
     });
 
+    const customStyle = {
+      overlay: {
+        position          : 'absolute',
+        top               : 0,
+        left              : 0,
+        right             : 0,
+        bottom            : 0,
+        backgroundColor   : 'rgba(220, 220, 220, 0.5)'
+      },
+      content : {
+        top                   : '30%',
+        left                  : '50%',
+        right                 : 'auto',
+        bottom                : 'auto',
+        marginRight           : '-50%',
+        transform             : 'translate(-50%, -50%)'
+      }
+    }
+
     return (
       <div className="container">
         <div className="header">
@@ -88,10 +107,16 @@ export class App extends Component {
         <div className="content">
           <Modal
           isOpen={ recipeToShow !== undefined}
-          contentLabel="Modal">
-            <button onClick={closeModal}>close</button>
-            <h1>Modal Content</h1>
-            <p>Etc.</p>
+          contentLabel="Modal"
+          style={customStyle}
+          >
+            <div className="modal">
+              <h1>{ recipeToShow ? recipeToShow.name : ""}</h1>
+              <ul>
+                {recipeToShow ? recipeToShow.ingredients.map( (ingre,i) => <li key={i}>{ingre}</li> ) : ""}
+              </ul>
+              <button onClick={closeModal}>Close</button>
+            </div>
           </Modal>
           <table className="u-full-width">
             <thead>
