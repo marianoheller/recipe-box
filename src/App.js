@@ -1,5 +1,9 @@
 import React, { Component } from 'react';
-import Modal from 'react-modal';
+import {reactLocalStorage} from 'reactjs-localstorage';
+
+import ViewRecipe from './components/ViewRecipe';
+import EditRecipe from './components/EditRecipe';
+import { initState} from './config';
 import './App.css';
 
 export default class AppContainer extends Component {
@@ -7,35 +11,27 @@ export default class AppContainer extends Component {
   constructor(props) {
     super(props);
 
-    this.state = {
-      showingId: null,
-      recipes: [
-        {
-          id: 1,
-          name: "asd",
-          ingredients: [
-            "a",
-            "b",
-            "c",
-          ]
-        },
-        {
-          id: 2,
-          name: "qwe",
-          ingredients: [
-            "q",
-            "dº",
-            "c",
-          ]
-        },
-      ],
-
+    // localStorage.clear();
+    const localSto = reactLocalStorage.get('recipes');
+    if ( localSto === undefined ) {
+      console.log("Initial localstorage set");
+      reactLocalStorage.set( "recipes" ,JSON.stringify(initState.recipes) );
+      reactLocalStorage.set( "nextID" , initState.nextID );
+      this.state = initState;
+    }
+    else {
+      console.log("Loaded from memory");
+      const recipes = JSON.parse(localSto);
+      this.state = {
+        ...initState,
+        recipes: recipes,
+        nextID: reactLocalStorage.get("nextID"),
+      }
     }
   }
 
   onRecipeClick(id) {
     return function changeShowingID() {
-      console.log(id);
       this.setState( {
         ...this.state,
         showingId: id,
@@ -43,11 +39,45 @@ export default class AppContainer extends Component {
     }.bind(this);
   }
 
-  closeModal() {
+  toggleAddRecipe() {
     this.setState( {
       ...this.state,
-      showingId: undefined,
+      addingRecipe: !this.state.addingRecipe,
     })
+  }
+
+  onAddRecipe(recipe) {
+    return function () {
+      const { recipes, nextID } = this.state;
+      if( recipe !== undefined) {
+        const newRecipe = {
+          ...recipe,
+          id: nextID,
+          ingredients: recipe.ingredients.split(",").map( (e) => e.trim() ),
+        };
+        console.log("New recipe:", newRecipe);
+        recipes.push(newRecipe);
+      }
+      reactLocalStorage.set( "recipes" , JSON.stringify(recipes) );
+      reactLocalStorage.set( "nextID" , recipe!==undefined ? String(parseInt(nextID)+1) : nextID );
+      this.setState( {
+        ...this.state,
+        nextID: recipe!==undefined ? String(parseInt(nextID)+1) : nextID,
+        recipes: recipes,
+        addingRecipe: false,
+      });
+    }.bind(this);
+  }
+
+  deleteRecipe(id) {
+    return function() {
+      const recipes = this.state.recipes.filter( (r) => r.id !== id )
+      reactLocalStorage.set( "recipes" , JSON.stringify(recipes) );
+      this.setState( {
+        ...this.state,
+        recipes: recipes,
+      })
+    }.bind(this);
   }
   
 
@@ -61,68 +91,66 @@ export default class AppContainer extends Component {
       recipeToShow = {recipeToShow}
       recipes = {recipes}
       onRecipeClick = {this.onRecipeClick.bind(this)}
-      closeModal = {this.closeModal.bind(this)}
+      deleteRecipe = {this.deleteRecipe.bind(this)}
+      
+      addingRecipe = {this.state.addingRecipe}
+      onAddRecipe = {this.onAddRecipe.bind(this)}
+      toggleAddRecipe = {this.toggleAddRecipe.bind(this)}
       />
     )
   }
 }
 
+
+
+
+
 export class App extends Component {
 
   render() {
-    const { recipeToShow, onRecipeClick, closeModal } = this.props;
+    const { 
+      recipeToShow, 
+      onRecipeClick,
+      deleteRecipe,
+
+      addingRecipe,   //State
+      onAddRecipe,    //Add recipe final
+      toggleAddRecipe,   //button addRecipe
+    } = this.props;
+
+    
     const recipes = this.props.recipes.map( (e,i) => {
       return (
         <tr key={i} onClick={onRecipeClick(e.id)} >
           <td>{e.name}</td>
-          <td>{e.ingredients.length}</td>
         </tr>
       )
     });
 
-    const customStyle = {
-      overlay: {
-        position          : 'absolute',
-        top               : 0,
-        left              : 0,
-        right             : 0,
-        bottom            : 0,
-        backgroundColor   : 'rgba(220, 220, 220, 0.5)'
-      },
-      content : {
-        top                   : '30%',
-        left                  : '50%',
-        right                 : 'auto',
-        bottom                : 'auto',
-        marginRight           : '-50%',
-        transform             : 'translate(-50%, -50%)'
-      }
-    }
 
+  
     return (
       <div className="container">
         <div className="header">
           <h1>{this.props.title}</h1>
+          <button className="button-primary" onClick={toggleAddRecipe}>Add recipe</button>
         </div>
         <div className="content">
-          <Modal
-          isOpen={ recipeToShow !== undefined}
-          contentLabel="Modal"
-          style={customStyle}
-          >
-            <div className="modal">
-              <h1>{ recipeToShow ? recipeToShow.name : ""}</h1>
-              <ul>
-                {recipeToShow ? recipeToShow.ingredients.map( (ingre,i) => <li key={i}>{ingre}</li> ) : ""}
-              </ul>
-              <button onClick={closeModal}>Close</button>
-            </div>
-          </Modal>
+
+          <ViewRecipe 
+          recipeToShow= {recipeToShow}
+          onRecipeClick= {onRecipeClick}
+          deleteRecipe = {deleteRecipe}
+          />
+          <EditRecipe 
+          addingRecipe={addingRecipe}
+          onAddRecipe={onAddRecipe}
+          />
+
           <table className="u-full-width">
             <thead>
               <tr>
-                <th>Recipe Name</th>
-                <th>Ingredients</th>
+                <th>Recipes</th>
               </tr>
             </thead>
             <tbody>

@@ -18,6 +18,7 @@ body {
 td, th {
   text-align: center;
   user-select: none;
+  padding: 6px;
 }
 
 tbody > tr:hover {
@@ -27,4 +28,28 @@ tbody > tr:hover {
 
 .modal {
   text-align: center;
+}
+
+.modal-ingredients {
+  text-align: left;
+}
+
+input, textarea {
+  width: 100%;
+  resize: vertical;
+  max-height: 300px;
+}
+
+.modal-buttons > div > button {
+  margin: 10px;
+}
+
+.button-danger {
+  color: white;
+  background-color: #c0392b;
+}
+
+.button-danger:hover {
+  color: white;
+  background-color: #c0392b;
 }

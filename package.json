@@ -4,9 +4,13 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "install": "^0.10.1",
+    "npm": "^5.0.3",
     "react": "^15.6.1",
     "react-dom": "^15.6.1",
-    "react-modal": "^2.0.6"
+    "react-form": "^1.2.8",
+    "react-modal": "^2.0.6",
+    "reactjs-localstorage": "0.0.5"
   },
   "devDependencies": {
     "react-scripts": "1.0.7"
