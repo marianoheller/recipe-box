@@ -48,14 +48,14 @@ export default class AppContainer extends Component {
 
   onAddRecipe(recipe) {
     return function () {
-      const { recipes, nextID } = this.state;
+      let { recipes, nextID } = this.state;
       if( recipe !== undefined) {
+        recipes = recipes.filter( (r) => r.id !== recipe.nextID )
         const newRecipe = {
           ...recipe,
-          id: nextID,
+          id: recipe.nextID,
           ingredients: recipe.ingredients.split(",").map( (e) => e.trim() ),
         };
-        console.log("New recipe:", newRecipe);
         recipes.push(newRecipe);
       }
       reactLocalStorage.set( "recipes" , JSON.stringify(recipes) );
@@ -79,10 +79,21 @@ export default class AppContainer extends Component {
       })
     }.bind(this);
   }
+
+  onEditRecipe(id) {
+    return function() {
+      this.setState( {
+        ...this.state,
+        addingRecipe: true,
+        showingId: undefined,
+        editingRecipe: this.state.recipes.find( (e) => e.id===id),
+      })
+    }.bind(this);
+  }
   
 
   render() {
-    const { recipes, showingId } = this.state;
+    const { recipes, showingId, nextID, editingRecipe } = this.state;
     const recipeToShow = recipes.find( (e) => e.id === showingId);
 
     return (
@@ -92,6 +103,9 @@ export default class AppContainer extends Component {
       recipes = {recipes}
       onRecipeClick = {this.onRecipeClick.bind(this)}
       deleteRecipe = {this.deleteRecipe.bind(this)}
+      nextID = {nextID}
+      onEditRecipe = {this.onEditRecipe.bind(this)}
+      editingRecipe = { editingRecipe }
       
       addingRecipe = {this.state.addingRecipe}
       onAddRecipe = {this.onAddRecipe.bind(this)}
@@ -112,6 +126,9 @@ export class App extends Component {
       recipeToShow, 
       onRecipeClick,
       deleteRecipe,
+      nextID,
+      onEditRecipe,
+      editingRecipe,
 
       addingRecipe,   //State
       onAddRecipe,    //Add recipe final
@@ -119,7 +136,9 @@ export class App extends Component {
     } = this.props;
 
     
-    const recipes = this.props.recipes.map( (e,i) => {
+    const recipes = this.props.recipes.sort( (r1,r2) => {
+      return parseInt(r1.id) - parseInt(r2.id);
+    }).map( (e,i) => {
       return (
         <tr key={i} onClick={onRecipeClick(e.id)} >
           <td>{e.name}</td>
@@ -141,10 +160,13 @@ export class App extends Component {
           recipeToShow= {recipeToShow}
           onRecipeClick= {onRecipeClick}
           deleteRecipe = {deleteRecipe}
+          editRecipe = {onEditRecipe}
           />
           <EditRecipe 
           addingRecipe={addingRecipe}
           onAddRecipe={onAddRecipe}
+          nextID = {nextID}
+          recipeToEdit = {editingRecipe}
           />
 
           <table className="u-full-width">

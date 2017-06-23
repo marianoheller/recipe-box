@@ -3,6 +3,7 @@
 export const initState = {
     showingId: null,
     addingRecipe: false,
+    editingRecipeID: null,
     nextID: "3",
     recipes: [
     {

@@ -6,7 +6,7 @@ import { customStyle } from '../config';
 
 export default class ViewRecipe extends Component {
     render() {
-        const { recipeToShow, onRecipeClick, deleteRecipe } = this.props;
+        const { recipeToShow, onRecipeClick, deleteRecipe, editRecipe } = this.props;
         
         const modalRecipe = (
         <Modal
@@ -25,7 +25,7 @@ export default class ViewRecipe extends Component {
                 </div>
                 <div className="u-pull-right">
                     <button className="button-danger" onClick={deleteRecipe(recipeToShow ? recipeToShow.id : null)}>Delete</button>
-                    <button onClick={onRecipeClick(undefined)}>Edit</button>
+                    <button onClick={editRecipe(recipeToShow ? recipeToShow.id : undefined)}>Edit</button>
                 </div>
             </div>
             </div>

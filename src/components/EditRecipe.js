@@ -7,7 +7,7 @@ import { customStyle } from '../config';
 
 export default class EditRecipe extends Component {
     render() {
-        const { onAddRecipe, addingRecipe } = this.props;
+        const { onAddRecipe, addingRecipe, nextID, recipeToEdit } = this.props;
         
         const modalAddRecipe = (
         <Modal
@@ -20,6 +20,11 @@ export default class EditRecipe extends Component {
             <Form
             onSubmit={(values) => {
                 onAddRecipe(values)();
+            }}
+            defaultValues={{
+                name: recipeToEdit ? recipeToEdit.name : "",
+                ingredients: recipeToEdit ? recipeToEdit.ingredients.join(",") : "",
+                nextID: recipeToEdit ? recipeToEdit.id : nextID,
             }}
             >
             {({ values, submitForm, addValue, removeValue, getError }) => {
@@ -37,6 +42,12 @@ export default class EditRecipe extends Component {
                     placeholder='Ingredients separated by commas'
                     required
                     />
+                    <Text // This is the built-in Text formInput 
+                    field='nextID' // field is a string version of the field location 
+                    type="hidden"
+                    />
+                    {/*<input type="hidden" name="country" value="Norway">*/}
+                    
                 </div>
                 <div className="modal-buttons">
                     <div className="u-pull-left">
