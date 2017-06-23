@@ -8,20 +8,22 @@ export const initState = {
     recipes: [
     {
         id: 1,
-        name: "asd",
+        name: "Pumpkin Pie",
         ingredients: [
-        "a",
-        "b",
-        "c",
+        "Pumpkin puree",
+        "Sweetened Condensed Milk",
+        "Eggs",
+        "Pumpkin Pie Spice",
+        "Pie Crust",
         ]
     },
     {
         id: 2,
-        name: "qwe",
+        name: "Bife a la criolla",
         ingredients: [
-        "q",
-        "dº",
-        "c",
+        "Carne de vaca",
+        "Verduras",
+        "Vino",
         ]
     },
     ],
